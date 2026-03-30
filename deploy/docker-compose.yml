@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  salary-predictor:
+    build: .
+    ports:
+      - "8000:8000"  # FastAPI
+      - "8501:8501"  # Streamlit
+    volumes:
+      - .:/app
+      - ./notebooks:/app/notebooks  # Model files
+      - ./data:/app/data            # Train data for top lists
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
