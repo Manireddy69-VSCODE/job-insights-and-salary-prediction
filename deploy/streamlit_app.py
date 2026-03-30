@@ -1,10 +1,11 @@
+import os
 import requests
 import streamlit as st
 
 
 st.set_page_config(page_title="Salary Predictor", layout="wide", page_icon="💰")
 
-API_URL = st.secrets.get("api_url", "http://localhost:8000")
+API_URL = st.secrets.get("api_url", os.getenv("API_URL", "http://localhost:8000"))
 
 st.title("💰 Job Salary Predictor")
 st.markdown("**Powered by the tuned XGBoost model** from `notebooks/03-model-tuning.ipynb`")
