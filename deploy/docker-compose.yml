@@ -1,14 +1,13 @@
-version: '3.8'
 services:
   salary-predictor:
-    build: .
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
     ports:
-      - "8000:8000"  # FastAPI
-      - "8501:8501"  # Streamlit
+      - "8000:8000"
+      - "8501:8501"
     volumes:
-      - .:/app
-      - ./notebooks:/app/notebooks  # Model files
-      - ./data:/app/data            # Train data for top lists
+      - ..:/app
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
