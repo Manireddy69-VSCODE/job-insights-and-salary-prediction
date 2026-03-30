@@ -84,5 +84,4 @@ See [CHANGELOG.md](CHANGELOG.md) for deployment summary and next steps.
 See [TODO.md](TODO.md) and [CHANGELOG.md](CHANGELOG.md).
 
 ---
-*Deployed by BLACKBOXAI → Journal Started*
 
