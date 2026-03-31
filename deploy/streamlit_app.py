@@ -56,7 +56,6 @@ col1, col2 = st.columns(2)
 with col1:
     min_exp = st.number_input("Min Experience (years)", 0.0, 20.0, 2.0, key="min_exp")
     max_exp = st.number_input("Max Experience (years)", 0.0, 20.0, 5.0, key="max_exp")
-    posted_days = st.slider("Posted Days Ago", 0, 90, 7)
 
 with col2:
     job_title = st.text_input("Job Title", "Data Scientist", key="job_title")
@@ -70,7 +69,6 @@ if st.button("Predict Salary", type="primary"):
     payload = {
         "min_exp": min_exp,
         "max_exp": max_exp,
-        "posted_days": posted_days,
         "job_title": job_title,
         "location": location,
     }

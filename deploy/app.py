@@ -30,7 +30,7 @@ predictor = SalaryPredictor()
 class SalaryInput(BaseModel):
     min_exp: float = Field(..., ge=0, description="Minimum years of experience")
     max_exp: float = Field(..., ge=0, description="Maximum years of experience")
-    posted_days: float = Field(..., ge=0, description="Days since job posted")
+    posted_days: float | None = Field(None, ge=0, description="Legacy field retained for compatibility and ignored by the model")
     job_title: str = Field(..., max_length=100, description="Job title")
     location: str = Field(..., max_length=100, description="Job location")
 

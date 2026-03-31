@@ -44,7 +44,6 @@ class SalaryPredictor:
         self,
         min_exp: float,
         max_exp: float,
-        posted_days: float,
         job_title: str,
         location: str,
     ) -> pd.DataFrame:
@@ -54,8 +53,8 @@ class SalaryPredictor:
         job_top = job_title if job_title in self.top_jobs else "Other"
         loc_top = location if location in self.top_locations else "Other"
 
-        features = ["min_exp", "max_exp", "posted_days", "job_top", "loc_top"]
-        data = pd.DataFrame([[min_exp, max_exp, posted_days, job_top, loc_top]], columns=features)
+        features = ["min_exp", "max_exp", "job_top", "loc_top"]
+        data = pd.DataFrame([[min_exp, max_exp, job_top, loc_top]], columns=features)
 
         encoded = pd.get_dummies(data, columns=["job_top", "loc_top"], drop_first=True)
         train_cols = self.model.feature_names_in_
@@ -69,11 +68,10 @@ class SalaryPredictor:
         try:
             min_exp = float(input_data.get("min_exp", 0))
             max_exp = float(input_data.get("max_exp", 0))
-            posted_days = float(input_data.get("posted_days", 0))
             job_title = input_data.get("job_title", "Other")
             location = input_data.get("location", "Other")
 
-            features = self.preprocess(min_exp, max_exp, posted_days, job_title, location)
+            features = self.preprocess(min_exp, max_exp, job_title, location)
             raw_pred = float(self.model.predict(features)[0])
             pred = max(raw_pred, 0.0)
             lower_bound = max(pred * 0.85, 0.0)
@@ -86,7 +84,6 @@ class SalaryPredictor:
                 "features_used": {
                     "min_exp": min_exp,
                     "max_exp": max_exp,
-                    "posted_days": posted_days,
                     "job_top": job_title[:30] + "..." if len(job_title) > 30 else job_title,
                     "loc_top": location[:30] + "..." if len(location) > 30 else location,
                 },
