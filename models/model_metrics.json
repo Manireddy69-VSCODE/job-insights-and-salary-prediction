@@ -1,0 +1,12 @@
+[
+  {
+    "model": "Linear Regression baseline",
+    "mae": 75424.52002119618,
+    "r2": 0.46022965922186176
+  },
+  {
+    "model": "Final XGBoost pipeline",
+    "mae": 60498.49678520115,
+    "r2": 0.6535887501898576
+  }
+]

@@ -1,33 +1,37 @@
-# Job Salary Predictor Changelog
+# Changelog
 
-## [v1.0.0] 2024-10 - Local Deployment Complete
-✅ **Model Tuning & Deployment (from TODO.md)**:
-- notebooks/03-model-tuning.ipynb: RandomizedSearchCV tuning on XGBoostRegressor.
-  - Params optimized: n_estimators, max_depth, learning_rate, etc.
-  - 5%+ MAE improvement vs baseline_salary_model.joblib.
-  - Saved `tuned_salary_model.joblib` in notebooks/.
-- deploy/ production stack:
-  | Component | File | Status |
-  |-----------|------|--------|
-  | Model Loader | model.py | Loads tuned model, exact notebook preprocess (top 20 jobs/locs from train.csv) |
-  | FastAPI API | app.py | POST /predict → prediction + confidence range |
-  | Streamlit UI | streamlit_app.py | localhost:8501, samples + custom form |
-  | Docker | Dockerfile, docker-compose.yml | `cd deploy && docker-compose up -d` |
+## 2026-03
 
-- **Test Example**: 
-  ```json
-  POST localhost:8000/predict
-  {
-    "min_exp": 2, "max_exp": 5, "posted_days": 7,
-    "job_title": "Data Scientist", "location": "Bangalore"
-  }
-  ```
-  Response: `{"prediction": 850000, "confidence_range": [722500, 977500]}`
+### Project cleanup and consolidation
+- reorganized the project so the reusable logic now lives in `src/`
+- added `app/` for the FastAPI entrypoint and kept `deploy/` focused on deployment helpers and the Streamlit UI
+- added `models/` as the single place for saved model artifacts and evaluation metrics
+- trained and saved:
+  - `models/baseline_salary_model.joblib`
+  - `models/final_salary_model.joblib`
+  - `models/model_metrics.json`
 
-- Updated README.md with run instructions.
-- All 15 TODO.md steps ✅ **DEPLOYMENT LIVE!**.
+### Pipeline consistency
+- moved shared preprocessing, training, and inference logic into:
+  - `src/data.py`
+  - `src/pipeline.py`
+  - `src/training.py`
+  - `src/predict.py`
+- updated the API to use the same saved prediction pipeline as training
+- removed the old mismatch where notebook-era logic and deployed prediction logic had drifted apart
 
-**Next**: Cloud deploy, monitoring (see updated TODO.md).
+### Notebook cleanup
+- organized the notebooks into a cleaner flow:
+  - `01` EDA
+  - `02` baseline
+  - `03` model improvement
+  - `04` polished Kaggle notebook
+- rewrote the notebook narration to feel more natural and easier to follow
 
-*Tracked by BLACKBOXAI - Started post-deployment journal.*
+### Deployment updates
+- switched Docker and Railway to the shared API entrypoint: `app.main:app`
+- kept the Streamlit app lightweight and connected it to the same backend flow
 
+### Current saved metrics
+- Linear Regression baseline: MAE `75,424.52`, R² `0.4602`
+- Final XGBoost pipeline: MAE `60,498.50`, R² `0.6536`

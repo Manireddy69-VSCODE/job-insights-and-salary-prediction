@@ -18,7 +18,9 @@ if "api_url" not in st.session_state:
     st.session_state.api_url = default_api_url
 
 st.title("💰 Job Salary Predictor")
-st.markdown("**Powered by the tuned XGBoost model** from `notebooks/03-model-tuning.ipynb`")
+st.markdown(
+    "A simple frontend for the same XGBoost pipeline used in training and in the API."
+)
 
 with st.sidebar:
     st.header("API Backend")
@@ -26,15 +28,15 @@ with st.sidebar:
         "Backend API URL",
         value=st.session_state.api_url,
         placeholder="https://your-railway-api.up.railway.app",
-        help="Use your deployed FastAPI URL here. For local dev, enter http://localhost:8000.",
+        help="Paste your deployed FastAPI URL here. If you're running everything locally, use http://localhost:8000.",
     ).rstrip("/")
     st.session_state.api_url = api_url
 
     if api_url:
         st.info(f"FastAPI docs: {api_url}/docs")
-        st.success("Model UI ready")
+        st.success("Backend connected and ready")
     else:
-        st.warning("Set your Railway/FastAPI backend URL to enable predictions.")
+        st.warning("Add your backend URL to start making predictions.")
 
     st.markdown("---")
     st.header("Sample Jobs")
@@ -43,7 +45,7 @@ with st.sidebar:
         {"job": "Content Writer", "loc": "Mumbai", "min_exp": 1, "max_exp": 3},
         {"job": "Graphic Designer", "loc": "Delhi", "min_exp": 0, "max_exp": 2},
     ]
-    selected = st.selectbox("Load sample", ["Custom"] + [sample["job"] for sample in samples])
+    selected = st.selectbox("Try a sample role", ["Custom"] + [sample["job"] for sample in samples])
 
     if selected != "Custom":
         sample = next(sample for sample in samples if sample["job"] == selected)
@@ -63,7 +65,7 @@ with col2:
 
 if st.button("Predict Salary", type="primary"):
     if not api_url:
-        st.error("Backend API URL is required. Add it in the sidebar or Streamlit secrets as `api_url`.")
+        st.error("I need a backend URL before I can make a prediction. Add it in the sidebar or as `api_url` in Streamlit secrets.")
         st.stop()
 
     payload = {
@@ -78,7 +80,7 @@ if st.button("Predict Salary", type="primary"):
             response = requests.post(f"{api_url}/predict", json=payload, timeout=15)
             if response.status_code == 200:
                 result = response.json()
-                st.success("Prediction ready")
+                st.success("Here’s the model’s estimate")
 
                 col_a, col_b = st.columns([2, 1])
                 with col_a:
@@ -90,20 +92,20 @@ if st.button("Predict Salary", type="primary"):
 
                 st.json(result["features_used"])
             else:
-                st.error(f"API error: {response.status_code}")
+                st.error(f"The API returned an error: {response.status_code}")
                 st.write(response.text)
         except Exception as exc:
-            st.error(f"Could not reach backend: {exc}")
+            st.error(f"I couldn’t reach the backend: {exc}")
             if "localhost" in api_url or "127.0.0.1" in api_url:
-                st.info("`localhost` only works on your own machine. For Streamlit Cloud, set `api_url` to your deployed Railway/FastAPI URL.")
+                st.info("`localhost` only works on your own machine. If this app is deployed on Streamlit Cloud, point `api_url` to your deployed Railway or FastAPI backend.")
             else:
-                st.info("Check that your backend is deployed, publicly reachable, and exposes `/predict`.")
+                st.info("Double-check that your backend is deployed, public, and exposes the `/predict` endpoint.")
 
 with st.expander("How to Run"):
     st.code(
         """
 1. pip install -r deploy/requirements-app.txt
-2. uvicorn deploy.app:app --reload
+2. uvicorn app.main:app --reload
 3. streamlit run streamlit_app.py
 
 For Streamlit Cloud, add a secret:
@@ -112,4 +114,4 @@ api_url = "https://your-backend-url.up.railway.app"
     )
 
 st.markdown("---")
-st.caption("Built with your tuned XGBoost model")
+st.caption("Built from a step-by-step ML project, then connected into one shared prediction pipeline.")
