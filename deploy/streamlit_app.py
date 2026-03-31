@@ -77,7 +77,7 @@ with st.expander("How to Run"):
         """
 1. pip install -r deploy/requirements-app.txt
 2. uvicorn deploy.app:app --reload
-3. streamlit run deploy/streamlit_app.py
+3. streamlit run streamlit_app.py
         """
     )
 

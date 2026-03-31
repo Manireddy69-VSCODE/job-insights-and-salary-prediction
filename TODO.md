@@ -1,43 +1,39 @@
-# Model Tuning & Deployment TODO ✅ COMPLETE
-## XGBoost Salary Predictor Deployed!
+# XGBoost Salary Predictor - Project Completion Tracker [BLACKBOXAI]
+Status: Local deployment ✅ | Tests basic ✅ | Ready for cloud/prod
 
-### Tuning ✅ COMPLETE
-1. ✅ Create TODO.md
-2. ✅ Create notebooks/03-model-tuning.ipynb 
-3. ✅ Install deps: pip install optuna scikit-optimize
-4. ✅ Run RandomizedSearchCV (tuned_salary_model.joblib saved)
-5. ✅ Compare MAE/R² vs baseline (>5% improvement achieved)
-6. ✅ Save tuned_salary_model.joblib
-7. ✅ Update README/Progress with results
+## ✅ Completed (from original TODO)
+- [x] Notebooks: baseline + tuning (tuned_salary_model.joblib)
+- [x] deploy/: app.py (FastAPI), model.py, streamlit_app.py, Dockerfile, docker-compose
+- [x] Local run: uvicorn + streamlit + Docker
+- [x] API test: /predict works (Data Scientist/Bangalore ~₹8.5L)
+- [x] README + basic test_model.py
 
-### Production Deployment ✅ LIVE
-8. ✅ deploy/ directory + requirements-app.txt
-9. ✅ FastAPI app.py (localhost:8000/docs)
-10. ✅ model.py (exact notebook preprocess + XGBoost)
-11. ✅ streamlit_app.py (UI: localhost:8501)
-12. ✅ Dockerfile + docker-compose.yml (docker run)
-13. ✅ Tested: Data Scientist/Bangalore → ₹8.5L pred
-14. ✅ README + Progress updated
-15. 🎉 **DEPLOYMENT COMPLETE** ✅
+## 🔄 In Progress (Execute Now)
+1. [ ] **Unit Tests**: pytest suite in deploy/test_model.py (preprocess/predict/edges)
+   - Command: `cd deploy && pip install pytest pytest-httpx && pytest test_model.py`
+2. [ ] **Cloud Deploy**: Railway (railway.toml exists)
+   - Commands: `railway login && railway up`
+3. [ ] **Enhancements**:
+   - [ ] app.py: Add logging
+   - [ ] streamlit_app.py: Feature importance chart
+   - [ ] CI/CD: .github/workflows/ci.yml
+4. [ ] **Finalize Docs**: Update CHANGELOG.md, README.md (live URL)
 
----
+## Next Commands (Terminal)
+```
+# 1. Tests
+cd deploy
+pip install pytest pytest-httpx requests
+pytest test_model.py -v
 
-# 📋 Post-Deployment Production Steps [In Progress by BLACKBOXAI]
+# 2. Docker local
+docker-compose up -d
+curl -X POST http://localhost:8000/predict ... (test)
 
-## Journal & Documentation
-- [x] Started CHANGELOG.md with deployment summary ✅
-- [x] Updated README.md: Changelog link + **Postman testing guide** ✅
-- [x] Update TODO.md final progress ✅
-- [ ] Test API with Postman/curl **(Your action: Follow README.md guide)**
+# 3. Railway cloud
+railway up
+```
 
-## Production Enhancements
-- [ ] Cloud Deployment: Render/Heroku (Docker push, free tier)
-  - `render.com` (easiest): New Web Service → Docker → repo.
-- [ ] Model Monitoring: Add logging to app.py (Sentry/Prometheus)
-- [ ] Unit Tests: pytest for model.py preprocess/predict
-- [ ] CI/CD: GitHub Actions (test + deploy)
-- [ ] UI Polish: Streamlit charts (feature importance), prediction history
-- [ ] Model Registry: MLflow/DVC for versioning
+**Progress: Run step 1 tests → paste output → cloud deploy → project COMPLETE 🎉**
 
-**Run Postman tests now → Confirm then cloud deploy!**
-
+Last update: $(date)

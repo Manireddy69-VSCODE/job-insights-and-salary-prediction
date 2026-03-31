@@ -15,7 +15,7 @@ uvicorn app:app --reload
 ➜ http://localhost:8000/docs
 
 # UI Demo  
-streamlit run streamlit_app.py  
+streamlit run ../streamlit_app.py  
 ➜ http://localhost:8501
 
 # Docker (prod)
@@ -82,6 +82,13 @@ See [CHANGELOG.md](CHANGELOG.md) for deployment summary and next steps.
 
 ### 🎯 Next: Cloud Deploy
 See [TODO.md](TODO.md) and [CHANGELOG.md](CHANGELOG.md).
+
+### Streamlit Cloud
+Deploy the root app file: `streamlit_app.py`
+
+Dependencies should be read from the root `requirements.txt`.
+
+If the builder still fails, open Advanced settings and set Python to `3.12`.
 
 ---
 
