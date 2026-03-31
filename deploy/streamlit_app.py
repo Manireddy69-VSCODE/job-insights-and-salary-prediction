@@ -1,19 +1,41 @@
 import os
+
 import requests
 import streamlit as st
 
 
 st.set_page_config(page_title="Salary Predictor", layout="wide", page_icon="💰")
 
-API_URL = st.secrets.get("api_url", os.getenv("API_URL", "http://localhost:8000"))
+
+def get_default_api_url() -> str:
+    secret_url = st.secrets.get("api_url", "")
+    env_url = os.getenv("API_URL", "")
+    return (secret_url or env_url).rstrip("/")
+
+
+default_api_url = get_default_api_url()
+if "api_url" not in st.session_state:
+    st.session_state.api_url = default_api_url
 
 st.title("💰 Job Salary Predictor")
 st.markdown("**Powered by the tuned XGBoost model** from `notebooks/03-model-tuning.ipynb`")
 
 with st.sidebar:
     st.header("API Backend")
-    st.info(f"FastAPI docs: {API_URL}/docs")
-    st.success("Model UI ready")
+    api_url = st.text_input(
+        "Backend API URL",
+        value=st.session_state.api_url,
+        placeholder="https://your-railway-api.up.railway.app",
+        help="Use your deployed FastAPI URL here. For local dev, enter http://localhost:8000.",
+    ).rstrip("/")
+    st.session_state.api_url = api_url
+
+    if api_url:
+        st.info(f"FastAPI docs: {api_url}/docs")
+        st.success("Model UI ready")
+    else:
+        st.warning("Set your Railway/FastAPI backend URL to enable predictions.")
+
     st.markdown("---")
     st.header("Sample Jobs")
     samples = [
@@ -41,6 +63,10 @@ with col2:
     location = st.text_input("Location", "Bangalore", key="location")
 
 if st.button("Predict Salary", type="primary"):
+    if not api_url:
+        st.error("Backend API URL is required. Add it in the sidebar or Streamlit secrets as `api_url`.")
+        st.stop()
+
     payload = {
         "min_exp": min_exp,
         "max_exp": max_exp,
@@ -51,7 +77,7 @@ if st.button("Predict Salary", type="primary"):
 
     with st.spinner("Predicting..."):
         try:
-            response = requests.post(f"{API_URL}/predict", json=payload, timeout=15)
+            response = requests.post(f"{api_url}/predict", json=payload, timeout=15)
             if response.status_code == 200:
                 result = response.json()
                 st.success("Prediction ready")
@@ -69,8 +95,11 @@ if st.button("Predict Salary", type="primary"):
                 st.error(f"API error: {response.status_code}")
                 st.write(response.text)
         except Exception as exc:
-            st.error(f"Backend not running? {exc}")
-            st.info("Run: `uvicorn deploy.app:app --reload`")
+            st.error(f"Could not reach backend: {exc}")
+            if "localhost" in api_url or "127.0.0.1" in api_url:
+                st.info("`localhost` only works on your own machine. For Streamlit Cloud, set `api_url` to your deployed Railway/FastAPI URL.")
+            else:
+                st.info("Check that your backend is deployed, publicly reachable, and exposes `/predict`.")
 
 with st.expander("How to Run"):
     st.code(
@@ -78,6 +107,9 @@ with st.expander("How to Run"):
 1. pip install -r deploy/requirements-app.txt
 2. uvicorn deploy.app:app --reload
 3. streamlit run streamlit_app.py
+
+For Streamlit Cloud, add a secret:
+api_url = "https://your-backend-url.up.railway.app"
         """
     )
 

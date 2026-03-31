@@ -74,11 +74,14 @@ class SalaryPredictor:
             location = input_data.get("location", "Other")
 
             features = self.preprocess(min_exp, max_exp, posted_days, job_title, location)
-            pred = float(self.model.predict(features)[0])
+            raw_pred = float(self.model.predict(features)[0])
+            pred = max(raw_pred, 0.0)
+            lower_bound = max(pred * 0.85, 0.0)
+            upper_bound = max(pred * 1.15, pred)
 
             return {
                 "prediction": round(pred, 0),
-                "confidence_range": [round(pred * 0.85, 0), round(pred * 1.15, 0)],
+                "confidence_range": [round(lower_bound, 0), round(upper_bound, 0)],
                 "currency": "INR (approx)",
                 "features_used": {
                     "min_exp": min_exp,
